@@ -1,4 +1,3 @@
-````markdown
 # SQL Solutions – Assignment 3 (Parts, Supplier, Cost)
 
 > Target DB: **Oracle Database Express Edition (Oracle XE)**
@@ -213,5 +212,3 @@ FROM Cost
 WHERE s_id = 'S2'
   AND cost > 10;
 ```
-
-````
