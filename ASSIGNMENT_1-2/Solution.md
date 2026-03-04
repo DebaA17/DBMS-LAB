@@ -1,4 +1,4 @@
-# SQL Solutions – Employee Table Queries
+# SQL Solutions – Assignment 1-2 Employee Table Queries
 
 ## 1. Create User Space
 
