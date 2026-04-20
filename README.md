@@ -36,6 +36,33 @@ DBMS lab work and SQL solutions aligned with the academic syllabus (BPPIMT, 4th 
 - These scripts target **Oracle SQL** (Oracle XE). If you try to run them on MySQL/PostgreSQL/SQLite, you will likely need small syntax changes.
 - For Oracle, `NULL` commissions/salaries behave as expected in aggregate queries (e.g., `SUM`).
 
+---
+
+## Git LFS (Linux-DBMS.zip)
+
+`Linux-DBMS.zip` contains my **Oracle XE (10g) Debian-based installation bundle** (the `.deb` files + related setup/notes).
+
+After extracting the zip, check inside:
+
+- `Linux-DEB`
+
+You can delete the zip after extraction if you want to keep the directory clean:
+
+```bash
+rm Linux-DBMS.zip
+```
+
+The zip is stored using **Git LFS**. If you clone/download the repo without LFS, you may get a small *pointer file* and `unzip` will fail.
+
+### Debian/Ubuntu (Debian-based distros)
+
+```bash
+sudo apt update
+sudo apt install -y git-lfs
+git lfs install
+git lfs pull
+```
+
 ## License
 
 See [LICENSE](LICENSE).
