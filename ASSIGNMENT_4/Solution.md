@@ -46,6 +46,8 @@ CREATE TABLE Cost (
 
 ## 2. Insert Adequate Records
 
+**(A) Insert into Parts**
+
 ```sql
 INSERT ALL
 	INTO Parts (p_id, p_name) VALUES ('P1', 'PEN')
@@ -55,13 +57,21 @@ INSERT ALL
 	INTO Parts (p_id, p_name) VALUES ('P5', 'PAD')
 	INTO Parts (p_id, p_name) VALUES ('P6', 'PLATE')
 SELECT * FROM dual;
+```
 
+**(B) Insert into Supplier**
+
+```sql
 INSERT ALL
 	INTO Supplier (s_id, s_name) VALUES ('S1', 'SOne')
 	INTO Supplier (s_id, s_name) VALUES ('S2', 'STwo')
 	INTO Supplier (s_id, s_name) VALUES ('S3', 'SThree')
 SELECT * FROM dual;
+```
 
+**(C) Insert into Cost**
+
+```sql
 INSERT ALL
 	-- Supplier S1
 	INTO Cost (s_id, p_id, cost) VALUES ('S1', 'P1',  5)
@@ -79,7 +89,6 @@ INSERT ALL
 	INTO Cost (s_id, p_id, cost) VALUES ('S3', 'P4', 25)
 	INTO Cost (s_id, p_id, cost) VALUES ('S3', 'P6',  7)
 SELECT * FROM dual;
-
 ```
 
 ---

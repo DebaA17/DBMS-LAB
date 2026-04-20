@@ -6,6 +6,8 @@
 
 ## 1. Create Tables
 
+**(A) CourseInfo**
+
 ```sql
 CREATE TABLE CourseInfo (
 	CourseName VARCHAR2(10) PRIMARY KEY,
@@ -17,7 +19,11 @@ CREATE TABLE CourseInfo (
 	CONSTRAINT chk_campus_id
 		CHECK (CampusID LIKE 'C%')
 );
+```
 
+**(B) StudentInfo**
+
+```sql
 CREATE TABLE StudentInfo (
 	StudentID NUMBER PRIMARY KEY,
 	StudentName VARCHAR2(50) NOT NULL,
@@ -31,12 +37,19 @@ CREATE TABLE StudentInfo (
 	CONSTRAINT chk_marks
 		CHECK (Marks BETWEEN 0 AND 100)
 );
+```
 
--- Auto-increment StudentID from 101
+**(C) Sequence (Auto-increment StudentID from 101)**
+
+```sql
 CREATE SEQUENCE StudentInfo_Seq
 	START WITH 101
 	INCREMENT BY 1;
+```
 
+**(D) Trigger**
+
+```sql
 CREATE OR REPLACE TRIGGER StudentInfo_BI
 BEFORE INSERT ON StudentInfo
 FOR EACH ROW
@@ -53,26 +66,32 @@ END;
 
 ## 2. Insert Data
 
+**(A) Insert into CourseInfo**
+
 ```sql
 INSERT ALL
-  INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('BCA',   42000, 'Dr. Sen',    'C1')
-  INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('BBA',   38000, 'Dr. Kapoor', 'C1')
-  INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('MCA',   50000, 'Dr. Dutta',  'C2')
-  INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('MBA',   55000, 'Dr. Roy',    'C1')
-  INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('BTech', 60000, 'Dr. Bose',   'C2')
+	INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('BCA',   42000, 'Dr. Sen',    'C1')
+	INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('BBA',   38000, 'Dr. Kapoor', 'C1')
+	INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('MCA',   50000, 'Dr. Dutta',  'C2')
+	INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('MBA',   55000, 'Dr. Roy',    'C1')
+	INTO CourseInfo (CourseName, Fees, HOD, CampusID) VALUES ('BTech', 60000, 'Dr. Bose',   'C2')
 SELECT * FROM dual;
+```
 
+**(B) Insert into StudentInfo**
+
+```sql
 INSERT ALL
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Rahul',  'BCA',   2, 78)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Neha',   'BCA',   6, 84)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Arjun',  'BBA',   2, 76)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Ananya', 'BBA',   6, 82)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Amit',   'MBA',   2, 85)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Meera',  'MBA',   4, 89)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Rajesh', 'MCA',   3, 88)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Sneha',  'MCA',   4, 91)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Karan',  'BTech', 7, 79)
-  INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Priya',  'BTech', 8, 93)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Rahul',  'BCA',   2, 78)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Neha',   'BCA',   6, 84)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Arjun',  'BBA',   2, 76)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Ananya', 'BBA',   6, 82)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Amit',   'MBA',   2, 85)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Meera',  'MBA',   4, 89)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Rajesh', 'MCA',   3, 88)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Sneha',  'MCA',   4, 91)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Karan',  'BTech', 7, 79)
+	INTO StudentInfo (StudentName, CourseName, Semester, Marks) VALUES ('Priya',  'BTech', 8, 93)
 SELECT * FROM dual;
 ```
 
