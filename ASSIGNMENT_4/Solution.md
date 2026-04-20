@@ -80,7 +80,6 @@ INSERT ALL
 	INTO Cost (s_id, p_id, cost) VALUES ('S3', 'P6',  7)
 SELECT * FROM dual;
 
-COMMIT;
 ```
 
 ---
