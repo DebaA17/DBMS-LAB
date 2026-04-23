@@ -38,30 +38,15 @@ DBMS lab work and SQL solutions aligned with the academic syllabus (BPPIMT, 4th 
 
 ---
 
-## Git LFS (Linux-DBMS.zip)
+## Oracle XE Installer Bundle (Release)
 
-`Linux-DBMS.zip` contains my **Oracle XE (10g) Debian-based installation bundle** (the `.deb` files + related setup/notes).
+`Linux-DBMS.zip` (Oracle XE 10g Debian-based installer bundle) is hosted as a **GitHub Release asset**:
 
-After extracting the zip, check inside:
+- https://github.com/DebaA17/DBMS-LAB/releases/tag/linux-dbms-zip-v1
+
+After downloading and extracting, check inside:
 
 - `Linux-DEB`
-
-You can delete the zip after extraction if you want to keep the directory clean:
-
-```bash
-rm Linux-DBMS.zip
-```
-
-The zip is stored using **Git LFS**. If you clone/download the repo without LFS, you may get a small *pointer file* and `unzip` will fail.
-
-### Debian/Ubuntu (Debian-based distros)
-
-```bash
-sudo apt update
-sudo apt install -y git-lfs
-git lfs install
-git lfs pull
-```
 
 ## License
 
