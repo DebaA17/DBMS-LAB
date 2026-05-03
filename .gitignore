@@ -1,3 +1,6 @@
 # Installer files
 Linux-DBMS.zip
 *.deb
+
+# CI output
+.ci-out/

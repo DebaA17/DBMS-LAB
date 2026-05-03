@@ -29,6 +29,13 @@ DBMS lab work and SQL solutions aligned with the academic syllabus (BPPIMT, 4th 
 	- Create table(s)
 	- Insert sample data
 	- Run the queries
+
+## CI (GitHub Actions)
+
+This repo includes a GitHub Actions workflow that runs the SQL blocks from each assignment `Solution.md` against an **Oracle Database Free** Docker container (close enough for most Oracle-XE-compatible lab SQL).
+
+- Workflow: [.github/workflows/oracle-ci.yml](.github/workflows/oracle-ci.yml)
+- Logs: if any script fails, the job fails and uploads an `oracle-sql-logs` artifact.
     
 
 ## Notes (Compatibility)

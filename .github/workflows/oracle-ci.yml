@@ -1,0 +1,43 @@
+name: Oracle SQL CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  oracle-sql:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Start Oracle (Docker)
+        run: |
+          docker pull docker.io/gvenzl/oracle-free:23
+          docker run -d \
+            --name oracledb \
+            -p 1521:1521 \
+            -e ORACLE_PASSWORD=oracle \
+            docker.io/gvenzl/oracle-free:23
+
+      - name: Run SQL checks
+        env:
+          ORACLE_CONTAINER: oracledb
+          ORACLE_IMAGE: docker.io/gvenzl/oracle-free:23
+          ORACLE_PASSWORD: oracle
+          ORACLE_PDB: FREEPDB1
+          APP_USER: lab_ci
+          APP_PASSWORD: lab_ci
+        run: |
+          chmod +x ci/run_oracle_ci.sh
+          ./ci/run_oracle_ci.sh
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oracle-sql-logs
+          path: .ci-out/logs
+          if-no-files-found: warn
