@@ -1,4 +1,10 @@
-# DBMS-LAB
+<h1 align="center">DBMS-LAB</h1>
+
+<p align="center">
+	<a href="https://github.com/DebaA17/DBMS-LAB/actions/workflows/oracle-ci.yml">
+		<img alt="Oracle SQL CI" src="https://img.shields.io/github/actions/workflow/status/DebaA17/DBMS-LAB/oracle-ci.yml?label=Oracle%20SQL%20CI" />
+	</a>
+</p>
 
 DBMS lab work and SQL solutions aligned with the academic syllabus (BPPIMT, 4th semester). The SQL in this repository is written for **Oracle Database Express Edition (Oracle XE)** and uses Oracle-specific syntax such as `INSERT ALL` and `TO_DATE(...)`.
 
@@ -32,10 +38,16 @@ DBMS lab work and SQL solutions aligned with the academic syllabus (BPPIMT, 4th 
 
 ## CI (GitHub Actions)
 
-This repo includes a GitHub Actions workflow that runs the SQL blocks from each assignment `Solution.md` against an **Oracle Database Free** Docker container (close enough for most Oracle-XE-compatible lab SQL).
+This repository uses GitHub Actions to automatically run SQL scripts from each assignment Solution.md against an Oracle Database Free Docker container (compatible with most Oracle XE syntax).
 
 - Workflow: [.github/workflows/oracle-ci.yml](.github/workflows/oracle-ci.yml)
-- Logs: if any script fails, the job fails and uploads an `oracle-sql-logs` artifact.
+
+How to view results
+
+- Go to the Actions tab on GitHub
+- Select a workflow run
+- Click a job to see step-by-step logs in the web UI
+- Download the oracle-sql-logs artifact to view full per-assignment log files
     
 
 ## Notes (Compatibility)

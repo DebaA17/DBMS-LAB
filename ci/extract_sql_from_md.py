@@ -16,27 +16,83 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-FENCE_RE = re.compile(
-    r"(?sm)^(?P<fence>```+)\s*(?P<lang>[A-Za-z0-9_-]+)?\s*\n(?P<body>.*?)\n(?P=fence)\s*$"
-)
-
-
 @dataclass(frozen=True)
 class SqlBlock:
     index: int
     body: str
+    label: str | None = None
+
+
+def _nearest_heading_label(lines: list[str], before_line: int) -> str | None:
+    """Find the nearest markdown heading above a given line index."""
+
+    # Scan upwards, skipping blank lines and separators.
+    for i in range(before_line, -1, -1):
+        raw = lines[i].rstrip("\n")
+        s = raw.strip()
+        if not s:
+            continue
+        if s in {"---", "- - -", "***"}:
+            continue
+
+        m = re.match(r"^(#{2,6})\s+(.*)$", s)
+        if m:
+            label = m.group(2).strip()
+            # Avoid overly generic section labels.
+            if label:
+                return label
+
+        # Some files use bold pseudo-headings (e.g., **(A) Insert into ...**)
+        m2 = re.match(r"^\*\*(.+?)\*\*$", s)
+        if m2:
+            label = m2.group(1).strip()
+            if label:
+                return label
+
+    return None
 
 
 def iter_sql_fenced_blocks(markdown_text: str) -> list[SqlBlock]:
+    """Extract SQL fenced blocks, carrying a nearby heading as a label."""
+
+    lines = markdown_text.splitlines(True)
     blocks: list[SqlBlock] = []
     index = 0
-    for m in FENCE_RE.finditer(markdown_text):
-        lang = (m.group("lang") or "").strip().lower()
-        if lang != "sql":
+
+    in_fence = False
+    fence = ""
+    fence_lang = ""
+    fence_start_line = 0
+    body_lines: list[str] = []
+
+    for line_no, line in enumerate(lines):
+        if not in_fence:
+            m = re.match(r"^(```+)\s*([A-Za-z0-9_-]+)?\s*$", line.rstrip("\n"))
+            if not m:
+                continue
+            fence = m.group(1)
+            fence_lang = (m.group(2) or "").strip().lower()
+            in_fence = True
+            fence_start_line = line_no
+            body_lines = []
             continue
-        index += 1
-        body = m.group("body").rstrip() + "\n"
-        blocks.append(SqlBlock(index=index, body=body))
+
+        # inside fence
+        if line.rstrip("\n").strip() == fence:
+            # fence closes
+            in_fence = False
+            if fence_lang == "sql":
+                index += 1
+                body = "".join(body_lines).rstrip() + "\n"
+                label = _nearest_heading_label(lines, fence_start_line - 1)
+                blocks.append(SqlBlock(index=index, body=body, label=label))
+            fence = ""
+            fence_lang = ""
+            body_lines = []
+            continue
+
+        body_lines.append(line)
+
     return blocks
 
 
@@ -71,6 +127,10 @@ def build_sqlplus_script(source_md: Path, blocks: list[SqlBlock]) -> str:
         if should_skip_block(block.body):
             continue
         kept += 1
+        if block.label:
+            lines.append(f"prompt \nprompt ==== {block.label} ====")
+        else:
+            lines.append(f"prompt \nprompt ==== Block {block.index} ====")
         lines.append(f"prompt -- BEGIN block {block.index}")
         lines.append(block.body.rstrip())
         lines.append(f"prompt -- END block {block.index}")
