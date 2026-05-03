@@ -50,13 +50,18 @@ wait_for_oracle() {
     # Healthcheck (preferred) if present
     local health
     health="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "${ORACLE_CONTAINER}" 2>/dev/null || true)"
-    if [[ "${health}" == "healthy" ]]; then
-      echo "Oracle container is healthy"
-      return
+    if [[ "${health}" != "none" ]]; then
+      if [[ "${health}" == "healthy" ]]; then
+        echo "Oracle container is healthy"
+        return
+      fi
+      # If a healthcheck exists, trust it and keep waiting.
+      sleep 5
+      continue
     fi
 
-    # Fallback: try a quick SQL*Plus connection inside the container
-    if docker exec "${ORACLE_CONTAINER}" bash -lc "echo 'select 1 from dual;' | sqlplus -s system/${ORACLE_PASSWORD}@localhost/${ORACLE_PDB} >/dev/null" 2>/dev/null; then
+    # Fallback only when no healthcheck is available
+    if docker exec "${ORACLE_CONTAINER}" bash -lc "echo 'select 1 from dual;' | sqlplus -s -L system/${ORACLE_PASSWORD}@localhost/${ORACLE_PDB} >/dev/null" 2>/dev/null; then
       echo "Oracle SQL*Plus connection OK"
       return
     fi
@@ -66,6 +71,37 @@ wait_for_oracle() {
 
   echo "Timed out waiting for Oracle startup"
   docker logs "${ORACLE_CONTAINER}" | tail -200
+  return 1
+}
+
+run_sqlplus_with_retry() {
+  local connect_string="$1"
+  local input_sql_file="$2"
+  local log_file="$3"
+
+  local max_attempts=20
+  local attempt=1
+  local exit_code
+
+  while (( attempt <= max_attempts )); do
+    set +e
+    docker exec -i "${ORACLE_CONTAINER}" bash -lc "set -o pipefail; sqlplus -s -L ${connect_string}" <"${input_sql_file}" 2>&1 | tee "${log_file}"
+    exit_code=${PIPESTATUS[0]}
+    set -e
+
+    # Retry only for transient listener/connection issues.
+    if grep -Eq "ORA-12541|SP2-0751" "${log_file}"; then
+      if (( attempt < max_attempts )); then
+        echo "Transient connection error (attempt ${attempt}/${max_attempts}); retrying..."
+        attempt=$((attempt + 1))
+        sleep 5
+        continue
+      fi
+    fi
+
+    return "${exit_code}"
+  done
+
   return 1
 }
 
@@ -152,10 +188,9 @@ GRANT CONNECT, RESOURCE TO ${schema_user};
 exit
 SQL
 
-  set +e
-  docker exec -i "${ORACLE_CONTAINER}" bash -lc "set -o pipefail; sqlplus -s -L system/${ORACLE_PASSWORD}@localhost/${ORACLE_PDB}" <"${setup_sql}" 2>&1 | tee "${log_file}"
-  local exit_code=${PIPESTATUS[0]}
-  set -e
+  local exit_code
+  exit_code=0
+  run_sqlplus_with_retry "system/${ORACLE_PASSWORD}@localhost/${ORACLE_PDB}" "${setup_sql}" "${log_file}" || exit_code=$?
 
   if grep -Eq "ORA-[0-9]{5}|SP2-[0-9]{4}|PLS-[0-9]{5}|LRM-[0-9]{5}|compilation errors" "${log_file}"; then
     echo "FAILED: schema setup for ${schema_user} (detected error text in log)"
@@ -195,12 +230,8 @@ run_sql_scripts() {
 
     echo "--- Running ${base} ---"
 
-    # Run inside the container so we always have SQL*Plus available.
-    # Use pipefail so ORA- errors propagate as a failing exit status.
-    set +e
-    docker exec -i "${ORACLE_CONTAINER}" bash -lc "set -o pipefail; sqlplus -s -L ${schema_user}/${schema_password}@localhost/${ORACLE_PDB}" <"${sql_file}" 2>&1 | tee "${log_file}"
-    exit_code=${PIPESTATUS[0]}
-    set -e
+    exit_code=0
+    run_sqlplus_with_retry "${schema_user}/${schema_password}@localhost/${ORACLE_PDB}" "${sql_file}" "${log_file}" || exit_code=$?
 
     # sqlplus can still exit 0 while printing errors (e.g., compilation errors).
     if grep -Eq "ORA-[0-9]{5}|SP2-[0-9]{4}|PLS-[0-9]{5}|LRM-[0-9]{5}|compilation errors" "${log_file}"; then
