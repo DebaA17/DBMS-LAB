@@ -36,6 +36,18 @@ DBMS lab work and SQL solutions aligned with the academic syllabus (BPPIMT, 4th 
 	- Insert sample data
 	- Run the queries
 
+3. **Resetting / Cleaning the Database**:
+	If you need to delete all existing tables and start with a clean environment, execute this PL/SQL block:
+
+	```sql
+	BEGIN
+	  FOR r IN (SELECT table_name FROM user_tables) LOOP
+	    EXECUTE IMMEDIATE 'DROP TABLE "' || r.table_name || '" CASCADE CONSTRAINTS PURGE';
+	  END LOOP;
+	END;
+	/
+	```
+
 ## CI (GitHub Actions)
 
 This repository uses GitHub Actions to automatically run SQL scripts from each assignment Solution.md against an Oracle Database Free Docker container (compatible with most Oracle XE syntax).
