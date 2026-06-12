@@ -169,6 +169,11 @@ def main() -> int:
         raise SystemExit("No ASSIGNMENT_*/Solution.md files found")
 
     for md_path in md_files:
+        # Skip ASSIGNMENT_13 since it uses interactive SQL*Plus bind variables.
+        if md_path.parent.name == "ASSIGNMENT_13":
+            print(f"Skipping {md_path.parent.name} (interactive execution)")
+            continue
+
         text = md_path.read_text(encoding="utf-8")
         blocks = iter_sql_fenced_blocks(text)
         script = build_sqlplus_script(md_path, blocks)
