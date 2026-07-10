@@ -13,7 +13,7 @@ Academic DBMS lab solutions aligned with the 4th-semester syllabus (BPPIMT), wri
 ## 📂 Navigation
 
 ### 🎓 Lab Notebook Preparation
-* **[Final PCA Lab Notebook Copy - BCA 4th Sem (1-5)](./PCA2-labcopy/)**
+* **[BCA 4th Sem Lab Notebook Solutions (1-5)](./notebook-copy/)** - *(Notebook work only, NOT actual exam questions)*
 
 ### 📝 Semester Assignments
 * [Assignment 1-2: Employee Queries](./ASSIGNMENT_1-2)

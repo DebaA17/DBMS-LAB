@@ -165,7 +165,7 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     md_files = sorted(repo_root.glob("ASSIGNMENT_*/Solution.md"))
-    pca2_files = sorted(repo_root.glob("PCA2-labcopy/ASSIGNMENT_*/Solution.md"))
+    pca2_files = sorted(repo_root.glob("notebook-copy/ASSIGNMENT_*/Solution.md"))
     all_files = md_files + pca2_files
 
     if not all_files:
@@ -182,9 +182,9 @@ def main() -> int:
         script = build_sqlplus_script(md_path, blocks)
 
         # e.g. ASSIGNMENT_3/Solution.md -> ASSIGNMENT_3.sql
-        # PCA2-labcopy/ASSIGNMENT_1/Solution.md -> PCA2_ASSIGNMENT_1.sql
-        if md_path.parent.parent.name == "PCA2-labcopy":
-            assignment_name = f"PCA2_{md_path.parent.name}"
+        # notebook-copy/ASSIGNMENT_1/Solution.md -> NOTEBOOK_ASSIGNMENT_1.sql
+        if md_path.parent.parent.name == "notebook-copy":
+            assignment_name = f"NOTEBOOK_{md_path.parent.name}"
         else:
             assignment_name = md_path.parent.name
         
