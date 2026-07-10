@@ -3,8 +3,11 @@
 ## 1. Create User Space
 
 ```sql
-CREATE USER firstname IDENTIFIED BY lastname;
-GRANT CONNECT, RESOURCE TO firstname;
+CREATE USER debasis IDENTIFIED BY student;
+```
+
+```sql
+GRANT CONNECT, RESOURCE TO debasis;
 ```
 
 > **Note:** If you are unable to do it, just simply head over to the home page and go to Administration and Database Users, then create a new DB user with username [your actual name] and password as your title (last name) and grant DBA permission or select all permissions. That's all.
