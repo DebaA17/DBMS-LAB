@@ -165,10 +165,13 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
 
     md_files = sorted(repo_root.glob("ASSIGNMENT_*/Solution.md"))
-    if not md_files:
-        raise SystemExit("No ASSIGNMENT_*/Solution.md files found")
+    pca2_files = sorted(repo_root.glob("PCA2-labcopy/ASSIGNMENT_*/Solution.md"))
+    all_files = md_files + pca2_files
 
-    for md_path in md_files:
+    if not all_files:
+        raise SystemExit("No Solution.md files found")
+
+    for md_path in all_files:
         # Skip ASSIGNMENT_13 since it uses interactive SQL*Plus bind variables.
         if md_path.parent.name == "ASSIGNMENT_13":
             print(f"Skipping {md_path.parent.name} (interactive execution)")
@@ -179,7 +182,12 @@ def main() -> int:
         script = build_sqlplus_script(md_path, blocks)
 
         # e.g. ASSIGNMENT_3/Solution.md -> ASSIGNMENT_3.sql
-        assignment_name = md_path.parent.name
+        # PCA2-labcopy/ASSIGNMENT_1/Solution.md -> PCA2_ASSIGNMENT_1.sql
+        if md_path.parent.parent.name == "PCA2-labcopy":
+            assignment_name = f"PCA2_{md_path.parent.name}"
+        else:
+            assignment_name = md_path.parent.name
+        
         out_path = out_dir / f"{assignment_name}.sql"
         out_path.write_text(script, encoding="utf-8")
 

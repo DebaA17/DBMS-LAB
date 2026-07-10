@@ -13,6 +13,7 @@ DBMS lab work and SQL solutions aligned with the academic syllabus (BPPIMT, 4th 
 - SQL scripts/solutions for lab assignments
 - Table creation + sample data inserts
 - Query solutions (aggregation, filtering, subqueries, etc.)
+- Solutions for the 5 PCA2 Exam Lab Copy assignments (located in `PCA2-labcopy/`)
 
 ## Prerequisites
 
